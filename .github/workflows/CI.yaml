@@ -24,7 +24,22 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Clean generated files
+        run: rm -rf {core,full,processor,test-startup,test-utils}/build/{generated,generated-src}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-results
+          path: |
+            core/build/reports/tests/test/
+            full/build/reports/tests/test/
+            processor/build/reports/tests/test/
+            test-startup/build/reports/tests/test/
+            test-utils/build/reports/tests/test/
+            core/build/generated/sources/annotationProcessor/java/main/apoc/ApocSignatures.java
+            full/build/generated/sources/annotationProcessor/java/main/apoc/ApocSignatures.java

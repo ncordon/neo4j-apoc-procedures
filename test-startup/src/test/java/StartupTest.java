@@ -1,4 +1,5 @@
 import apoc.ApocSignatures;
+import apoc.help.Help;
 import apoc.util.Neo4jContainerExtension;
 import apoc.util.TestUtil;
 import org.junit.Test;
@@ -52,6 +53,8 @@ public class StartupTest {
 
     @Test
     public void compare_with_sources() {
+        System.out.println("****apoc full: " + APOC_FULL);
+
         try (Neo4jContainerExtension neo4jContainer = createEnterpriseDB(APOC_FULL, !TestUtil.isRunningInCI())) {
             neo4jContainer.start();
 
@@ -63,6 +66,13 @@ public class StartupTest {
                 final List<String> procedureNames = session.run("CALL apoc.help('') YIELD core, type, name WHERE core = true and type = 'procedure' RETURN name")
                         .list(record -> record.get("name").asString());
 
+                procedureNames.stream().forEach( name -> {
+                    System.out.println( "*** " + name );
+                    if (name.equals( "apoc.nlp.azure.keyPhrases.stream" )) {
+                        System.out.println("***** extended: " + new Help().extended );
+                        System.out.println("***** extended contains : " + new Help().extended.contains( "apoc.nlp.azure.keyPhrases.stream" ) );
+                    }
+                } );
 
                 assertEquals(sorted(ApocSignatures.PROCEDURES), procedureNames);
                 assertEquals(sorted(ApocSignatures.FUNCTIONS), functionNames);
