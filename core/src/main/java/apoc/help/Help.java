@@ -48,6 +48,7 @@ public class Help {
                 searchText = true;
             }
         }
+        System.out.println("***** extended from Help: " + extended );
         String filter = " WHERE name starts with 'apoc.' " +
                 " AND ($name IS NULL  OR toLower(name) CONTAINS toLower($name) " +
                 " OR ($desc IS NOT NULL AND toLower(description) CONTAINS toLower($desc))) " +
